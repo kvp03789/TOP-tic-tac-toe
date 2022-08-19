@@ -1,0 +1,74 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+}
+
+header {
+    background-color: grey;
+    height: 200px;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(3, 200px);
+    grid-template-rows: repeat(3, 200px);
+    
+}
+/* MANAGING BORDERS*/
+.game-board div {
+    border: 2px solid black;
+    position:relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.game-board div:nth-child(-n+3) {
+    border-top: none;
+}
+
+.game-board div:nth-last-child(-n+3) {
+    border-bottom: none;
+}
+
+.game-board div:nth-child(3n + 1) {
+    border-left: none;
+}
+
+.game-board div:nth-child(3n + 3) {
+    border-right: none;
+}
+
+/* CIRCLE PSEUDO ELEMENT AND HOVER */
+
+.game-board div::after, .game-board div::before {
+    content: "";
+    position: absolute;
+
+    display: none;
+    border-radius: 50%;
+}
+
+.game-board div::before {
+    background-color: rgba(72, 63, 63, 0.428);
+    width: 90%;
+    height: 90%;
+}
+
+.game-board div::after {
+    background-color: rgb(255, 255, 255);
+    width: 70%;
+    height: 70%;
+}
+
+.game-board div:hover::after, .game-board div:hover::before {
+    display: block;
+}
+
