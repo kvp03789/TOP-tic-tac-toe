@@ -48,10 +48,9 @@ header {
 
 /* CIRCLE PSEUDO ELEMENT AND HOVER */
 
-.game-board div::after, .game-board div::before {
+/* .game-board div::after, .game-board div::before {
     content: "";
     position: absolute;
-
     display: none;
     border-radius: 50%;
 }
@@ -66,9 +65,29 @@ header {
     background-color: rgb(255, 255, 255);
     width: 70%;
     height: 70%;
-}
+} */
 
 .game-board div:hover::after, .game-board div:hover::before {
     display: block;
 }
+
+/* "X" PSEUDO ELEMENT AND HOVER */
+
+.game-board div::after, .game-board div::before {
+    content: "";
+    position: absolute;
+    display: none;
+    width: 100%;
+    height: 20px;
+    background-color: rgb(72, 63, 63);
+}
+
+.game-board div::before {
+    transform: rotate(45deg);
+}
+
+.game-board div::after {
+    transform: rotate(-45deg);
+}
+
 
