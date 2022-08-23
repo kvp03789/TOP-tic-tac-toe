@@ -1,4 +1,4 @@
-
+//OBJECT THAT CONTAINS ALL THE DOM STUFF
 const startScreen = (function() {
     'use strict';
 
@@ -38,36 +38,98 @@ const startScreen = (function() {
         titlePage.style.display ="none";
         inGame.forEach((e) => {e.classList.add("visible")});
         whichPlayer.innerHTML = "Player 1's Turn";
+        gameBoard.startPlayerOneTurn();
+    }
+
+    function changePlayerTurnText() {
+        if (whichPlayer.innerHTML = "Player 1's Turn") {
+            whichPlayer.innerHTML = "Player 2's Turn";
+        }
+        if (whichPlayer.innerHTML = "Player 2's Turn") {
+            whichPlayer.innerHTML = "Player 1's Turn";
+        }
     }
 
     return {
-        showStartScreen
+        showStartScreen, changePlayerTurnText
     }
 })();
 
-//gameboard module/object
+
+
+//GAME BOARD OBJECT MODULE
 const gameBoard = (function() {
 
     const gameGrid = document.querySelectorAll(".main-grid");
-    const gameBoardGrid = Array.from(gameGrid);
+    let gameBoardGrid = Array.from(gameGrid);
+   
 
-    function placeX() {
+    //player 1 turn
+    const startPlayerOneTurn = function() {
 
-    }
+        gameGrid.forEach((el) => {
+            el.classList.remove("o-hover");
+        });
+        gameGrid.forEach((el) => {
+                el.classList.add("x-hover");
+        });
 
-    return {
-        gameBoardGrid,
-    }
+        gameGrid.forEach((el) => {
+            el.addEventListener("click", (e) => {
+                e.target.setAttribute('id', 'place-x');
+                e.target.classList.add("marked");
+                startScreen.changePlayerTurnText();
+                gameBoard.startPlayerTwoTurn();
+            })
+        });
+
+        }
+
+    //player 2 turn
+
+    const startPlayerTwoTurn = function () {
+        gameGrid.forEach((el) => {
+            el.classList.remove("x-hover");
+        });
+
+        gameGrid.forEach((el) => {
+                el.classList.add("o-hover");   
+        })
+
+        gameGrid.forEach((el) => {
+            el.addEventListener("click", (e) => {
+                e.target.setAttribute('id', 'place-o');
+                e.target.classList.add("marked");  
+                startScreen.changePlayerTurnText();
+                gameBoard.startPlayerOneTurn();
+            })
+        });
+        }
+
+        return {
+            gameBoardGrid, startPlayerOneTurn, startPlayerTwoTurn
+        }
 })();
 
+
+
 //Player factory function
-const Player = (name, symbol) => {
+const Player = (name, symbol, turn) => {
     const playerName = name;
     const playerSymbol = symbol;
+    const isPlayerTurn = turn;
 };
 
 
+
+
+
+
+
+
 startScreen.showStartScreen();
+
+
 
 
 
