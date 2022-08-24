@@ -1,6 +1,7 @@
 //OBJECT THAT CONTAINS ALL THE DOM STUFF
+'use strict';
 const startScreen = (function() {
-    'use strict';
+    
 
     const titlePage = document.createElement("div");
     const playerImage = document.createElement("img");
@@ -9,6 +10,18 @@ const startScreen = (function() {
     const computerDiv = document.createElement("div");
     const inGame = document.querySelectorAll(".in-game");
     const whichPlayer = document.querySelector(".which-player");
+    const gameBoardGrid = document.querySelector(".game-board");
+    const gameGridArray = [];
+
+    const makeBoard = function() {
+        for(let i = 0; i < gameBoard.gridArray.length; i++){
+            let newDiv = document.createElement('div');
+            newDiv.classList.add("main-grid");
+            newDiv.setAttribute("id", `${i + 1}`);
+            gameBoardGrid.append(newDiv);
+            gameGridArray.shift
+        }       
+    } 
 
     function showStartScreen() {
     //first set class lists and src for images
@@ -36,9 +49,10 @@ const startScreen = (function() {
 
     function beginGame() {
         titlePage.style.display ="none";
+        makeBoard();
         inGame.forEach((e) => {e.classList.add("visible")});
         whichPlayer.innerHTML = "Player 1's Turn";
-        gameBoard.startPlayerOneTurn();
+
     }
 
     function changePlayerTurnText() {
@@ -57,58 +71,25 @@ const startScreen = (function() {
 
 
 
-//GAME BOARD OBJECT MODULE
+// GAME BOARD OBJECT MODULE
 const gameBoard = (function() {
 
-    const gameGrid = document.querySelectorAll(".main-grid");
-    let gameBoardGrid = Array.from(gameGrid);
-   
+    const gridArray = [null, null, null, null, null, null, null, null, null];
 
-    //player 1 turn
-    const startPlayerOneTurn = function() {
-
-        gameGrid.forEach((el) => {
-            el.classList.remove("o-hover");
-        });
-        gameGrid.forEach((el) => {
-                el.classList.add("x-hover");
-        });
-
-        gameGrid.forEach((el) => {
-            el.addEventListener("click", (e) => {
-                e.target.setAttribute('id', 'place-x');
-                e.target.classList.add("marked");
-                startScreen.changePlayerTurnText();
-                gameBoard.startPlayerTwoTurn();
-            })
-        });
-
+    const changeTurn = function() {
+        if (newPlayer1.isPlayerTurn === true) {
+            newPlayer1.isPlayerTurn = false;
+            newPlayer2.isPlayerTurn = true;
         }
-
-    //player 2 turn
-
-    const startPlayerTwoTurn = function () {
-        gameGrid.forEach((el) => {
-            el.classList.remove("x-hover");
-        });
-
-        gameGrid.forEach((el) => {
-                el.classList.add("o-hover");   
-        })
-
-        gameGrid.forEach((el) => {
-            el.addEventListener("click", (e) => {
-                e.target.setAttribute('id', 'place-o');
-                e.target.classList.add("marked");  
-                startScreen.changePlayerTurnText();
-                gameBoard.startPlayerOneTurn();
-            })
-        });
+        else if(newPlayer1.isPlayerTurn === false) {
+            newPlayer1.isPlayerTurn = true;
+            newPlayer2.isPlayerTurn = false;
         }
+    }
+    return {
+       changeTurn, gridArray
+    }
 
-        return {
-            gameBoardGrid, startPlayerOneTurn, startPlayerTwoTurn
-        }
 })();
 
 
@@ -118,9 +99,28 @@ const Player = (name, symbol, turn) => {
     const playerName = name;
     const playerSymbol = symbol;
     const isPlayerTurn = turn;
+
+    const makeMove = function(choice) {
+        if(isPlayerTurn === true) {
+        gameBoard.gridArray[choice] = playerSymbol;
+        console.log(gameBoard.gridArray);
+        gameBoard.changeTurn();
+        }
+        else {
+            console.log("u must construct additional pylons");
+        }
+        
+    }
+
+    return {playerName, playerSymbol, isPlayerTurn, makeMove};
 };
 
 
+    
+
+
+let newPlayer1 = Player("miggs", "x", false );
+let newPlayer2 = Player("kvp0", "o", true);
 
 
 
