@@ -26,9 +26,9 @@ const startScreen = (function() {
     function showStartScreen() {
     //first set class lists and src for images
         titlePage.classList.add("new-game-screen");
-        playerImage.src = "/images/player-icon.svg";
+        playerImage.src = "player-icon.svg";
         playerImage.classList.add("player-icon");
-        computerImage.src = "/images/robot-icon.svg";
+        computerImage.src = "robot-icon.svg";
         computerImage.classList.add("robot-icon");
         playerDiv.classList.add("player-div")
         computerDiv.classList.add("player-div")
