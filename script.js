@@ -109,10 +109,10 @@ const gameBoard = (function() {
         for(let i = 0; i < arr.length; i++) {
             const newDiv = document.createElement("div");
             newDiv.innerText = arr[i];
-            containerDiv.append(newDiv);  
+            document.querySelector(".game-board").append(newDiv);  
             newDiv.classList.add("main-grid");
             newDiv.setAttribute("id", `${i + 1}`);
-            gameBoardGrid.append(newDiv);
+            document.querySelector(".game-board").append(newDiv);
         }
     }   
        
