@@ -54,7 +54,7 @@ const startScreen = (function() {
         gameBoard.makeGrid(gameBoard.gridArray);
         inGame.forEach((e) => {e.classList.add("visible")});
         document.querySelectorAll(".main-grid").forEach((x) => x.classList.add("x-hover"));
-        gameBoard.eventListenerBonanza();
+        startScreen.eventListenerBonanza();
         
     }
 
