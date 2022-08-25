@@ -140,7 +140,7 @@ const gameBoard = (function() {
             
         }
         else {console.log("not ur turn lol");}
-        this.makeGrid(this.arrayGrid);
+        this.makeGrid(this.gridArray);
         }
 
     return {
