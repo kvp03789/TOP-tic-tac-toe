@@ -26,9 +26,9 @@ const startScreen = (function() {
     function showStartScreen() {
     //first set class lists and src for images
         titlePage.classList.add("new-game-screen");
-        playerImage.src = "player-icon.svg";
+        playerImage.src = "/images/player-icon.svg";
         playerImage.classList.add("player-icon");
-        computerImage.src = "robot-icon.svg";
+        computerImage.src = "/images/robot-icon.svg";
         computerImage.classList.add("robot-icon");
         playerDiv.classList.add("player-div")
         computerDiv.classList.add("player-div")
@@ -69,25 +69,69 @@ const startScreen = (function() {
     }
 })();
 
+//N1 OBJ
+const n1 = {
+    arrayX: [],
+    arrayY: [],
+    winConditions: {a:[0, 1, 2], b:[3, 4 ,5], c:[6, 7, 8], d:[0, 3, 6], e:[1, 4, 7],
+        f:[2, 6, 8], g:[0, 4, 8], h:[2, 4, 6]},
+
+    
+    checkWin() {
+        for (let i in this.winConditions) {          
+            if (this.winConditions[i].every(value => {
+                return this.arrayX.indexOf(value) !== -1;
+            })) {console.log("GG")}
+        };
+    },
+
+
+    
+}
 
 
 // GAME BOARD OBJECT MODULE
 const gameBoard = (function() {
 
     const gridArray = [null, null, null, null, null, null, null, null, null];
+    const whichTurn = 1;
+   
+    const makeMove = function(player, choice) {
+        
+        if (player.playerNumber === this.changeTurn) {
+            let symbol = player.playerSymbol;   
+            gridArray[choice] = player.playerSymbol;  //mark board with player's move
+            if (symbol === "x") {
+                n1.arrayX.push(choice);//push to arrayX
+            }
+            else if (symbol === "o") {
+                n1.arrayY.push(choice);//push to arrayY
+            }
+            console.log(gridArray);
+            console.log(n1.arrayX, n1.arrayY);
+            if(this.changeTurn === 1){
+                this.changeTurn = 2;
+                } 
+            else if (this.changeTurn === 2) {
+                this.changeTurn = 1;
+                }
+            console.log(`it is player ${this.whichTurn}'s turn.`);
+            return n1.checkWin();
+            
+        }
+        else {console.log("not ur turn lol");}
+        }
 
-    const changeTurn = function() {
-        if (newPlayer1.isPlayerTurn === true) {
-            newPlayer1.isPlayerTurn = false;
-            newPlayer2.isPlayerTurn = true;
-        }
-        else if(newPlayer1.isPlayerTurn === false) {
-            newPlayer1.isPlayerTurn = true;
-            newPlayer2.isPlayerTurn = false;
-        }
-    }
     return {
-       changeTurn, gridArray
+       makeMove, gridArray, whichTurn, 
+
+       get changeTurn() {
+        return this.whichTurn;
+       },
+
+       set changeTurn(val) {
+        this.whichTurn = val;
+       }
     }
 
 })();
@@ -95,32 +139,23 @@ const gameBoard = (function() {
 
 
 //Player factory function
-const Player = (name, symbol, turn) => {
-    const playerName = name;
-    const playerSymbol = symbol;
-    const isPlayerTurn = turn;
+const Player = (name, symbol, number) => {
+    let playerName = name;
+    let playerSymbol = symbol;
+    let playerNumber = number;
+  
 
-    const makeMove = function(choice) {
-        if(isPlayerTurn === true) {
-        gameBoard.gridArray[choice] = playerSymbol;
-        console.log(gameBoard.gridArray);
-        gameBoard.changeTurn();
-        }
-        else {
-            console.log("u must construct additional pylons");
-        }
-        
-    }
-
-    return {playerName, playerSymbol, isPlayerTurn, makeMove};
+    return {
+        playerName, playerSymbol, playerNumber
+    };
 };
 
 
     
 
 
-let newPlayer1 = Player("miggs", "x", false );
-let newPlayer2 = Player("kvp0", "o", true);
+let player1 = Player("miggs", "x", 1 );
+let player2 = Player("kvp0", "o", 2);
 
 
 
