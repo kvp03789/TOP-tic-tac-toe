@@ -9,19 +9,11 @@ const startScreen = (function() {
     const playerDiv = document.createElement("div");
     const computerDiv = document.createElement("div");
     const inGame = document.querySelectorAll(".in-game");
-    const whichPlayer = document.querySelector(".which-player");
-    const gameBoardGrid = document.querySelector(".game-board");
-    const gameGridArray = [];
+    // const whichPlayer = document.querySelector(".which-player");
+    // const gameBoardGrid = document.querySelector(".game-board");
+    // const gameGridArray = [];
 
-    const makeBoard = function() {
-        for(let i = 0; i < gameBoard.gridArray.length; i++){
-            let newDiv = document.createElement('div');
-            newDiv.classList.add("main-grid");
-            newDiv.setAttribute("id", `${i + 1}`);
-            gameBoardGrid.append(newDiv);
-            gameGridArray.shift
-        }       
-    } 
+    
 
     function showStartScreen() {
     //first set class lists and src for images
@@ -39,6 +31,16 @@ const startScreen = (function() {
         document.body.prepend(titlePage);
     }
 
+    function changeTurnClass() {
+        const gameBoardTiles = document.querySelectorAll(".main-grid");
+        if(gameBoard.whichTurn === 1) {
+            gameBoardTiles.forEach((x) => x.classList.add("x-hover"));            
+        }
+        else if(gameBoard.whichTurn === 2) {
+            gameBoardTiles.forEach((x) => x.classList.add("o-hover"));
+        }
+    }
+
     playerDiv.addEventListener("click", () => {
         beginGame();
     })
@@ -49,25 +51,26 @@ const startScreen = (function() {
 
     function beginGame() {
         titlePage.style.display ="none";
-        makeBoard();
+        gameBoard.makeGrid(gameBoard.gridArray);
         inGame.forEach((e) => {e.classList.add("visible")});
-        whichPlayer.innerHTML = "Player 1's Turn";
-
+        document.querySelectorAll(".main-grid").forEach((x) => x.classList.add("x-hover"));
+        eventListenerBonanza();
     }
 
-    function changePlayerTurnText() {
-        if (whichPlayer.innerHTML = "Player 1's Turn") {
-            whichPlayer.innerHTML = "Player 2's Turn";
-        }
-        if (whichPlayer.innerHTML = "Player 2's Turn") {
-            whichPlayer.innerHTML = "Player 1's Turn";
-        }
+    function eventListenerBonanza() {
+        document.querySelectorAll(".main-grid").forEach((el) => {
+            el.addEventListener("click", (e) => {
+                  gameBoard.makeMove(gameBoard.whichPlayer, e.target.id);
+                  gameBoard.makeGrid(gameBoard.gridArray);
+            })
+        })
     }
 
     return {
-        showStartScreen, changePlayerTurnText
+        beginGame, showStartScreen, changeTurnClass, eventListenerBonanza
     }
 })();
+
 
 //N1 OBJ
 const n1 = {
@@ -79,14 +82,19 @@ const n1 = {
     
     checkWin() {
         for (let i in this.winConditions) {          
-            if (this.winConditions[i].every(value => {
+            if (
+                (this.winConditions[i].every(value => {
                 return this.arrayX.indexOf(value) !== -1;
-            })) {console.log("GG")}
+            }))
+            ||
+            (this.winConditions[i].every(value => {
+                return this.arrayY.indexOf(value) !== -1;
+            }))
+            ) {
+                console.log("GG")
+            }
         };
     },
-
-
-    
 }
 
 
@@ -95,7 +103,18 @@ const gameBoard = (function() {
 
     const gridArray = [null, null, null, null, null, null, null, null, null];
     const whichTurn = 1;
-   
+
+    const makeGrid = function(arr) {
+        for(let i = 0; i < arr.length; i++) {
+            const newDiv = document.createElement("div");
+            // newDiv.innerText = arr[i];
+            containerDiv.append(newDiv);  
+            newDiv.classList.add("main-grid");
+            newDiv.setAttribute("id", `${i + 1}`);
+            gameBoardGrid.append(newDiv);
+        }
+    }   
+       
     const makeMove = function(player, choice) {
         
         if (player.playerNumber === this.changeTurn) {
@@ -123,7 +142,7 @@ const gameBoard = (function() {
         }
 
     return {
-       makeMove, gridArray, whichTurn, 
+       makeMove, gridArray, whichTurn, makeGrid,
 
        get changeTurn() {
         return this.whichTurn;
@@ -131,11 +150,18 @@ const gameBoard = (function() {
 
        set changeTurn(val) {
         this.whichTurn = val;
-       }
+       },
+
+       get whichPlayer() {
+        if(this.changeTurn === 1){
+            return "player1"
+        }
+        else if(this.changeTurn === 2){
+            return "player2"
+        }
     }
-
+    }
 })();
-
 
 
 //Player factory function
@@ -143,7 +169,6 @@ const Player = (name, symbol, number) => {
     let playerName = name;
     let playerSymbol = symbol;
     let playerNumber = number;
-  
 
     return {
         playerName, playerSymbol, playerNumber
@@ -151,18 +176,10 @@ const Player = (name, symbol, number) => {
 };
 
 
-    
-
-
-let player1 = Player("miggs", "x", 1 );
+let player1 = Player("miggs", "x", 1);
 let player2 = Player("kvp0", "o", 2);
 
-
-
-
-
-
-startScreen.showStartScreen();
+startScreen.beginGame();
 
 
 
