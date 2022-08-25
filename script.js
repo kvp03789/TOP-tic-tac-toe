@@ -54,7 +54,8 @@ const startScreen = (function() {
         gameBoard.makeGrid(gameBoard.gridArray);
         inGame.forEach((e) => {e.classList.add("visible")});
         document.querySelectorAll(".main-grid").forEach((x) => x.classList.add("x-hover"));
-        eventListenerBonanza();
+        gameBoard.eventListenerBonanza();
+        
     }
 
     function eventListenerBonanza() {
@@ -102,12 +103,12 @@ const n1 = {
 const gameBoard = (function() {
 
     const gridArray = [null, null, null, null, null, null, null, null, null];
-    const whichTurn = 1;
+    let whichTurn = 1;
 
     const makeGrid = function(arr) {
         for(let i = 0; i < arr.length; i++) {
             const newDiv = document.createElement("div");
-            // newDiv.innerText = arr[i];
+            newDiv.innerText = arr[i];
             containerDiv.append(newDiv);  
             newDiv.classList.add("main-grid");
             newDiv.setAttribute("id", `${i + 1}`);
@@ -117,7 +118,7 @@ const gameBoard = (function() {
        
     const makeMove = function(player, choice) {
         
-        if (player.playerNumber === this.changeTurn) {
+        if (player === this.whichPlayer) {
             let symbol = player.playerSymbol;   
             gridArray[choice] = player.playerSymbol;  //mark board with player's move
             if (symbol === "x") {
@@ -128,17 +129,18 @@ const gameBoard = (function() {
             }
             console.log(gridArray);
             console.log(n1.arrayX, n1.arrayY);
-            if(this.changeTurn === 1){
-                this.changeTurn = 2;
+            if(this.whichPlayer === "player1"){
+                 this.changeTurn = 2;
                 } 
-            else if (this.changeTurn === 2) {
-                this.changeTurn = 1;
+            else if (this.whichPlayer === "player2") {
+                 this.changeTurn = 1;
                 }
             console.log(`it is player ${this.whichTurn}'s turn.`);
             return n1.checkWin();
             
         }
         else {console.log("not ur turn lol");}
+        this.makeGrid(this.arrayGrid);
         }
 
     return {
