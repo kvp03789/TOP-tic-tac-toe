@@ -38,6 +38,9 @@ const startScreen = (function() {
     }
 
     function showGG(arg) {
+        if (GGScreen.classList.contains("hidden")) {
+            GGScreen.classList.toggle("hidden"); 
+        }
         GGScreen.classList.add("gg-screen");
         if (arg === "x") {
         GGText.innerText = "GG! PLAYER 1 WINS!";
@@ -65,7 +68,7 @@ const startScreen = (function() {
             gameBoard.deleteGrid(gameBoard.gridArray);
             gameBoard.makeGrid(gameBoard.getArray); 
             startScreen.eventListenerBonanza();
-            GGScreen.classList.toggle("hidden"); 
+            GGScreen.classList.add("hidden"); 
             this.changePlayerIconColor();
  
         });
@@ -118,7 +121,7 @@ const startScreen = (function() {
             el.addEventListener("click", (e) => {
                   
                   gameBoard.makeMove(gameBoard.whichPlayer, e.target.id);
-                  gameBoard.makeGrid(gameBoard.gridArray);   
+                  gameBoard.makeGrid(gameBoard.getArray);   
                   this.eventListenerBonanza();  
                   
             })
@@ -187,6 +190,11 @@ const n1 = {
 const gameBoard = (function() {
 
     const gridArray = [null, null, null, null, null, null, null, null, null];
+
+    const setArray = function(i, val) {
+        gridArray[i] = val;
+    };
+
     let whichTurn = 1;
 
     const makeGrid = function(arr) {
@@ -218,8 +226,12 @@ const gameBoard = (function() {
     }
 
     const clearArray = function(val) { 
-        this.gridArray.length = 0;
-        this.gridArray = [val, val, val, val, val, val, val, val, val];
+        // this.gridArray.length = 0;
+        // this.gridArray = [null, null, null, null, null, null, null, null, null];
+        this.gridArray.splice(0, this.gridArray.length);
+        for(let i = 0; i < 9; i++) {
+            this.gridArray.push(null);
+        }
     }
        
     const makeMove = function(playerSelect, choice) {   
@@ -227,15 +239,16 @@ const gameBoard = (function() {
         if (playerSelect == this.whichPlayer) {
             gameBoard.deleteGrid(gameBoard.gridArray);
             startScreen.changePlayerIconColor();
-            gridArray[choice] = playerSelect;  //mark board with player's move
+            // gridArray[choice] = playerSelect;  //mark board with player's move
+            setArray(choice, playerSelect);
             if (playerSelect === "player1") {
                 n1.arrayX.push(parseInt(choice));//push to arrayX
             }
             else if (playerSelect === "player2") {
                 n1.arrayY.push(parseInt(choice));//push to arrayY
             }
-            console.log(this.gridArray);
-            console.log(n1.arrayX, n1.arrayY);
+            console.log(this.getArray);
+            console.log(n1.getX(), n1.getY());
             if(this.whichPlayer === "player1"){
                  this.changeTurn = 2;
                 } 
@@ -251,7 +264,7 @@ const gameBoard = (function() {
         }
 
     return {
-       makeMove, gridArray, whichTurn, makeGrid, deleteGrid, clearArray,
+       makeMove, gridArray, whichTurn, makeGrid, deleteGrid, clearArray, setArray, 
 
        get changeTurn() {
         return this.whichTurn;
@@ -273,6 +286,10 @@ const gameBoard = (function() {
       get getArray() {
         return this.gridArray;
       },
+
+     
+
+     
       
     }
 })();
