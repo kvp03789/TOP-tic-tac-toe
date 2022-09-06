@@ -14,10 +14,14 @@ const startScreen = (function() {
     // const gameGridArray = [];
     const playerOneIcon = document.querySelector("#playerOneIcon");
     const playerTwoIcon = document.querySelector("#playerTwoIcon");
+    const playerAIIcon = document.querySelector("#playerAIIcon");
     const GGScreen = document.createElement("div");
     const GGTextContainer = document.createElement("div");
     const GGText = document.createElement("h1");
     const replayButton = document.createElement("button");
+    const playerPara1 = document.querySelector("#player-para1");
+    const playerPara2 = document.querySelector("#player-para2");
+    const playerPara3 = document.querySelector("#player-para3");
 
     
 
@@ -62,15 +66,14 @@ const startScreen = (function() {
         document.body.prepend(GGScreen);
         document.querySelector(".replay-button").addEventListener("click", () => {
             gameBoard.clearArray(null);
-            // gameBoard.setArray = null;
-            // gameBoard.gridArray.length = 0;
             gameBoard.changeTurn = 1;
             gameBoard.deleteGrid(gameBoard.gridArray);
-            gameBoard.makeGrid(gameBoard.getArray); 
-            startScreen.eventListenerBonanza();
+            // gameBoard.makeGrid(gameBoard.getArray); 
+            // startScreen.eventListenerBonanza();
+            startScreen.changePlayerIconColor();
             GGScreen.classList.add("hidden"); 
-            this.changePlayerIconColor();
- 
+            titlePage.classList.toggle("hidden");
+            startScreen.showStartScreen();
         });
 
     }
@@ -80,10 +83,16 @@ const startScreen = (function() {
     function changeTurnClass() {
         const gameBoardTiles = document.querySelectorAll(".main-grid");
         if(gameBoard.whichTurn === 1) {
-            gameBoardTiles.forEach((x) => x.classList.add("x-hover"));            
+            gameBoardTiles.forEach((x) => x.classList.add("x-hover"));  
+                    
         }
         else if(gameBoard.whichTurn === 2) {
             gameBoardTiles.forEach((x) => x.classList.add("o-hover"));
+            playerPara2.innerText = "Player 2's Turn!" 
+        }
+        else if(gameBoard.whichTurn === 3) {
+            gameBoardTiles.forEach((x) => x.classList.add("o-hover"));
+            playerPara2.innerText = "AI's Turn!" 
         }
     }
 
@@ -97,6 +106,23 @@ const startScreen = (function() {
         // }
         playerOneIcon.classList.toggle("yellow");
         playerTwoIcon.classList.toggle("yellow");
+        playerAIIcon.classList.toggle("yellow");
+    }
+
+    function changePlayerText() {
+        if(gameBoard.whichTurn === 1) {
+        playerPara1.innerText = "Player 1's Turn!" ;
+        playerPara2.innerText = ""; 
+        playerPara3.innerText = "";
+        }
+        else if(gameBoard.whichTurn === 2) {
+            playerPara2.innerText = "Player 2's Turn!"  
+            playerPara1.innerText = ""; 
+            }
+        else if(gameBoard.whichTurn === 3) {
+            playerPara3.innerText = "AI's Turn!";
+            playerPara1.innerText = "";
+        }
     }
 
     playerDiv.addEventListener("click", () => {
@@ -104,16 +130,54 @@ const startScreen = (function() {
     })
 
     computerDiv.addEventListener("click", () => {
-        beginGame();
+        beginGameAI();
     })
 
+    
+
     function beginGame() {
-        titlePage.style.display ="none";
+        // titlePage.style.display ="none";
+        titlePage.classList.toggle("hidden");
         gameBoard.makeGrid(gameBoard.gridArray);
-        inGame.forEach((e) => {e.classList.add("visible")});
+        // inGame.forEach((e) => {e.classList.add("visible")});
+        if(document.querySelector("#playerOneIcon").classList.contains("hidden")) {
+            document.querySelector("#playerOneIcon").classList.toggle("hidden");
+        }
+        
+        if(document.querySelector("#playerTwoIcon").classList.contains("hidden")) {
+            document.querySelector("#playerTwoIcon").classList.toggle("hidden");
+        }
+        if(document.querySelector("#playerAIIcon").classList.contains("visible")){
+            document.querySelector("#playerAIIcon").classList.replace("visible", "hidden");
+        }
+        else {document.querySelector("#playerAIIcon").classList.add("hidden")}
+
+        // document.querySelector("#playerAIIcon").classList.add("hidden");
         document.querySelectorAll(".main-grid").forEach((x) => x.classList.add("x-hover"));
         startScreen.eventListenerBonanza();
+        startScreen.changePlayerText();
+    }
+
+    function beginGameAI() {
+        // titlePage.style.display ="none";
+        titlePage.classList.toggle("hidden");
+        gameBoard.makeGrid(gameBoard.gridArray);
+        if(document.querySelector("#playerOneIcon").classList.contains("hidden")) {
+            document.querySelector("#playerOneIcon").classList.toggle("hidden");
+        }
         
+        if(document.querySelector("#playerTwoIcon").classList.contains("visible")) {
+            document.querySelector("#playerTwoIcon").classList.replace("visible", "hidden");
+        }
+        else {
+            document.querySelector("#playerTwoIcon").classList.add("hidden"); 
+        }
+        if(document.querySelector("#playerAIIcon").classList.contains("hidden")){
+            document.querySelector("#playerAIIcon").classList.toggle("hidden");
+        }
+        document.querySelectorAll(".main-grid").forEach((x) => x.classList.add("x-hover"));
+        startScreen.eventListenerBonanzaAI();
+        startScreen.changePlayerText();
     }
 
     function eventListenerBonanza() {
@@ -128,6 +192,26 @@ const startScreen = (function() {
         })
     }
 
+    function eventListenerBonanzaAI() {
+        if(gameBoard.whichPlayer === "player3") {
+            // startScreen.changePlayerIconColor();
+            gameBoard.makeMoveAIAgain(gameBoard.whichPlayer, player3.makeMoveAI());
+            
+            gameBoard.makeGridAI(gameBoard.getArray); 
+            eventListenerBonanzaAI();
+        }
+        else {
+        document.querySelectorAll(".main-grid").forEach((el) => {
+            el.addEventListener("click", (e) => {
+                // startScreen.changePlayerIconColor();
+                  gameBoard.makeMoveAIAgain(gameBoard.whichPlayer, e.target.id);
+                  gameBoard.makeGridAI(gameBoard.getArray);   
+                  startScreen.eventListenerBonanzaAI();  
+                })
+            })
+        }
+    }
+
     function eventListenerBonanzaLite() {
         document.querySelectorAll(".main-grid").forEach((el) => {
             el.addEventListener("click", (e) => {
@@ -136,10 +220,28 @@ const startScreen = (function() {
         })
     }
 
+    function showError() {
+        const errorScreen = document.createElement("div");
+        const errorText = document.createElement("h3");
+        const errorButton = document.createElement("button");
+        errorText.classList.add("error-text");
+        errorScreen.classList.add("error-screen");
+        errorButton.classList.add("error-button");
+        errorText.textContent = "Select another square! >.<"
+        errorButton.innerText = "Oki!";
+        errorScreen.append(errorText);
+        errorScreen.append(errorButton);
+        document.body.prepend(errorScreen);
+
+        errorButton.addEventListener("click", (e) => {
+            errorScreen.classList.toggle("hidden");
+        })
+    }
+
     return {
         beginGame, showStartScreen, showGG, changeTurnClass, 
-        eventListenerBonanza, eventListenerBonanzaLite,
-        changePlayerIconColor,
+        eventListenerBonanza, eventListenerBonanzaLite, eventListenerBonanzaAI,
+        changePlayerIconColor, changePlayerText, showError
     }
 })();
 
@@ -149,7 +251,7 @@ const n1 = {
     arrayX: [],
     arrayY: [],
     winConditions: {a:[0, 1, 2], b:[3, 4 , 5], c:[6, 7, 8], d:[0, 3, 6], e:[1, 4, 7],
-        f:[2, 6, 8], g:[0, 4, 8], h:[2, 4, 6]},
+        f:[2, 5, 8], g:[0, 4, 8], h:[2, 4, 6]},
 
     
     checkWin() {
@@ -192,7 +294,9 @@ const gameBoard = (function() {
     const gridArray = [null, null, null, null, null, null, null, null, null];
 
     const setArray = function(i, val) {
+        
         gridArray[i] = val;
+        
     };
 
     let whichTurn = 1;
@@ -213,11 +317,42 @@ const gameBoard = (function() {
             if(this.changeTurn === 1) {
                 newDiv.classList.add("x-hover");
             }
-            else {newDiv.classList.add("o-hover");}
-            document.querySelector(".game-board").append(newDiv);
-        }
+            else{
+                newDiv.classList.add("o-hover");
+            } 
+            if (newDiv.classList.contains("place-x")) {
+                newDiv.classList.remove("o-hover");
+            }
+            startScreen.changePlayerText();
+            
+        }}
         
-    }   
+        const makeGridAI = function(arr) {
+            for(let i = 0; i < arr.length; i++) {
+                const newDiv = document.createElement("div");
+                // newDiv.innerText = arr[i];
+                document.querySelector(".game-board").append(newDiv);  
+                newDiv.classList.add("main-grid");
+                newDiv.setAttribute("id", `${i}`);
+                if(arr[i] === "player1"){
+                    newDiv.classList.add("place-x")
+                }
+                else if(arr[i] === "player3") {
+                    newDiv.classList.add("place-o")
+                }
+                if(this.changeTurn === 1) {
+                    newDiv.classList.add("x-hover");
+                }
+                else{
+                    newDiv.classList.add("o-hover");
+                } 
+                if (newDiv.classList.contains("place-x")) {
+                    newDiv.classList.remove("o-hover");
+                }
+                startScreen.changePlayerText();
+                
+            }}
+    
 
     const deleteGrid = function(arr) {
         for(let i = 0; i < arr.length; i++) {
@@ -239,8 +374,7 @@ const gameBoard = (function() {
         if (playerSelect == this.whichPlayer) {
             gameBoard.deleteGrid(gameBoard.gridArray);
             startScreen.changePlayerIconColor();
-            // gridArray[choice] = playerSelect;  //mark board with player's move
-            setArray(choice, playerSelect);
+                setArray(choice, playerSelect);            
             if (playerSelect === "player1") {
                 n1.arrayX.push(parseInt(choice));//push to arrayX
             }
@@ -263,8 +397,70 @@ const gameBoard = (function() {
         
         }
 
+        const makeMoveAI = function(playerSelect, choice) {   
+        
+            if (playerSelect == this.whichPlayer && gameBoard.gridArray[choice] === null) {
+                gameBoard.deleteGrid(gameBoard.gridArray);
+                startScreen.changePlayerIconColor();
+                // gridArray[choice] = playerSelect;  //mark board with player's move
+                setArray(choice, playerSelect);
+                if (playerSelect === "player1") {
+                    n1.arrayX.push(parseInt(choice));//push to arrayX
+                }
+                else if (playerSelect === "player3") {
+                    n1.arrayY.push(parseInt(choice));//push to arrayY
+                }
+                console.log(this.getArray);
+                console.log(n1.getX(), n1.getY());
+                if(this.whichPlayer === "player1"){
+                     this.changeTurn = 3;
+                    } 
+                else if (this.whichPlayer === "player3") {
+                     this.changeTurn = 1;
+                    }
+                console.log(`it is player ${this.whichTurn}'s turn.`);
+                n1.checkWin();
+                
+            }
+            else {gameBoard.makeMove();}
+            
+            }
+
+            const makeMoveAIAgain = function(playerSelect, choice) {   
+                
+                if (playerSelect == this.whichPlayer && gameBoard.gridArray[choice] === null)  {
+                    gameBoard.deleteGrid(gameBoard.gridArray);
+                    startScreen.changePlayerIconColor();
+                    // gridArray[choice] = playerSelect;  //mark board with player's move
+                    setArray(choice, playerSelect);
+                    if (playerSelect === "player1") {
+                        n1.arrayX.push(parseInt(choice));//push to arrayX
+                    }
+                    else if (playerSelect === "player3") {
+                        n1.arrayY.push(parseInt(choice));//push to arrayY
+                    }
+                    console.log(this.getArray);
+                    console.log(n1.getX(), n1.getY());
+                    if(this.whichPlayer === "player1"){
+                         this.changeTurn = 3;
+                        } 
+                    else if (this.whichPlayer === "player3") {
+                         this.changeTurn = 1;
+                        }
+                    console.log(`it is player ${this.whichTurn}'s turn.`);
+                    n1.checkWin();
+                    
+                }
+                else if (gameBoard.gridArray[choice] !== null){gameBoard.makeMoveAIAgain(gameBoard.whichPlayer, player3.makeMoveAI())}
+
+                else if(gridArray.every((e) => {e !== null})){
+                        return console.log("TIE")}
+                
+                }
+              
     return {
-       makeMove, gridArray, whichTurn, makeGrid, deleteGrid, clearArray, setArray, 
+       makeMove, makeMoveAI, makeMoveAIAgain, gridArray, whichTurn, makeGrid, makeGridAI, 
+       deleteGrid, clearArray, setArray, 
 
        get changeTurn() {
         return this.whichTurn;
@@ -280,6 +476,9 @@ const gameBoard = (function() {
         }
         else if(this.changeTurn === 2){
             return "player2"
+        }
+        else if(this.changeTurn === 3){
+            return "player3"
         }
       },
 
@@ -300,18 +499,21 @@ const Player = (name, symbol, number) => {
     let playerName = name;
     let playerSymbol = symbol;
     let playerNumber = number;
-
+    let makeMoveAI = function() {
+       return Math.floor((Math.random() * 8));
+    }
     return {
-        playerName, playerSymbol, playerNumber
+        playerName, playerSymbol, playerNumber, makeMoveAI
     };
 };
 
 
 let player1 = Player("miggs", "x", 1);
 let player2 = Player("kvp0", "o", 2);
+let player3 = Player("AI", "o", 3)
 
-startScreen.beginGame();
-
+// startScreen.beginGame();
+startScreen.showStartScreen()
 
 
 
